@@ -18,7 +18,7 @@ Final_States = np.zeros((m, L, L))
 for i in range(m):
     X[i][0] = 100 - 100*np.random.rand() # B
     X[i][1] = 100 - 100*np.random.rand() # I
-    X[i][2] = 100 - 100*np.random.rand() # T
+    X[i][2] = 500 - 500*np.random.rand() # T
     
     model = Ising2DTF(L, B=X[i][0], I=X[i][1], T=X[i][2])
     model.evolve(N)
@@ -30,9 +30,9 @@ for i in range(m):
     if (i%100 == 1):
         print(i)
         
-state_file = open(r'Ising_state2.pkl', 'wb')
+state_file = open(r'Ising_state5.pkl', 'wb')
 pickle.dump(Final_States, state_file)
 state_file.close()
         
-np.savetxt("data/Magnetization_data3.txt", X, header =
+np.savetxt("data/Magnetization_data5.txt", X, header =
            '%22s %24s %24s %24s' % ('B', 'I', 'T', 'M'))
