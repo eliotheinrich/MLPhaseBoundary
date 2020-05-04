@@ -9,7 +9,6 @@ import keras.layers as layers
 from keras import Sequential
 
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
 
 ice_state_file = open(r'data/Ising_state_sq_ice.pkl', 'rb')
 ice_states = pickle.load(ice_state_file)
@@ -43,8 +42,8 @@ model = Sequential([
 
 
 model.compile(optimizer='adam',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
+              loss='binary_crossentropy',
+              metrics=['binary_accuracy'])
 
 model.fit(X_train, y_train, epochs=10, batch_size=16, validation_data = (X_test, y_test))
 
