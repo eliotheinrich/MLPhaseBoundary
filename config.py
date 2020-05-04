@@ -285,36 +285,44 @@ class SquareIce2D:
         self.I = I
         self.T = T
         self.s = np.random.choice([-1,1], size=(L,L))
-        self.s[1::2,::2] = 0
+
+        # Sites corresponding to corners or plaquettes
         self.s[::2,1::2] = 0
+        self.s[1::2,::2] = 2
+        
+        # Indices of plaquettes
+        self.p = [(i,j) for i in range(1,L,2) for j in range(0,L,2)]
 
     # Computes internal energy of system
     def E(self):
         E = 0.
-        for i in range(0, self.L):
-            for j in range(i%2-1, self.L, 2):
-                Q = 0.
-                Q += self.s[i][(j-1)%self.L] \
-                   + self.s[i][(j+1)%self.L] \
-                   + self.s[(i-1)%self.L][j] \
-                   + self.s[(i+1)%self.L][j] \
-
-                E += Q**2
+        for p in self.p:
+            i,j = p 
+            Q = self.s[i][(j-1)%self.L]*self.s[i][(j+1)%self.L] \
+              * self.s[(i-1)%self.L][j]*self.s[(i+1)%self.L][j]
+            E += Q**2
 
         return self.I*E
 
     # Computes change in internal energy from flipping spin at site (i,j)
     def dE(self, i, j):
         s1 = self.s[i][j]
-        s2 = self.s[(i-1)%self.L][(j+1)%self.L]
-        s3 = self.s[i][(j+2)%self.L]
-        s4 = self.s[(i+1)%self.L][(j+1)%self.L]
-        s5 = self.s[(i+2)%self.L][j]
-        s6 = self.s[(i+1)%self.L][(j-1)%self.L]
-        s7 = self.s[i][(j-2)%self.L]
-        s8 = self.s[(i-1)%self.L][(j-1)%self.L]
-        s9 = self.s[(i-2)%self.L][j]
-        dE = -4*s1*(s3 + s5 + s7 + s9 + 2*(s2 + s4 + s6 + s8))
+        if ((i+1)%self.L,j) in self.p:
+            s2 = self.s[(i+1)%self.L][(j+1)%self.L]
+            s3 = self.s[(i+2)%self.L][j]
+            s4 = self.s[(i+1)%self.L][(j-1)%self.L]
+            s5 = self.s[(i-1)%self.L][(j-1)%self.L]
+            s6 = self.s[(i-2)%self.L][j]
+            s7 = self.s[(i-1)%self.L][(j+1)%self.L]
+        else:
+            s2 = self.s[(i-1)%self.L][(j+1)%self.L]
+            s3 = self.s[i][(j+2)%self.L]
+            s4 = self.s[(i+1)%self.L][(j+1)%self.L]
+            s5 = self.s[(i+1)%self.L][(j-1)%self.L]
+            s6 = self.s[i][(j-2)%self.L]
+            s7 = self.s[(i-1)%self.L][(j-1)%self.L]
+
+        dE = -2*self.I*s1*(s2 + s3 + s4 + s5 + s6 + s7)
 
         return dE
 
@@ -375,7 +383,7 @@ class GaugeIsing2D:
             E += self.s[i][(j-1)%self.L]*self.s[i][(j+1)%self.L] \
                * self.s[(i-1)%self.L][j]*self.s[(i+1)%self.L][j]
 
-        return self.I*E
+        return -self.I*E
 
     # Computes change in internal energy from flipping spin at site (i,j)
     def dE(self, i, j):
@@ -430,6 +438,8 @@ class GaugeIsing2D:
 
     def __str__(self):
         return str(self.s)
+
+
 
 # Generates a phase map in I vs T space for testing purposes
 def test_model(test_model):
