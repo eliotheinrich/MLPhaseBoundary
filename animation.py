@@ -37,12 +37,18 @@ def animate_model(model, nframes, nsteps, save=False, title="animation.mp4"):
         plt.show()
 
 
-L = 100
+L = 20
 
-model = Ising2DTF(L, B=0., I=1., T=1.)
-animate_model(model, 300, 3000, save=True, title="ferro.mp4")
 
-model = Ising2DTF(L, B=0., I=1., T=100.)
-animate_model(model, 300, 3000, save=True, title="para.mp4")
+model = SquareIce2D(L, I=1., T=1.)
+animate_model(model, 300, 10, save=False)
+
+
+
+#model = Ising2DTF(L, B=0., I=1., T=1.)
+#animate_model(model, 300, 3000, save=True, title="ferro.mp4")
+
+#model = Ising2DTF(L, B=0., I=1., T=100.)
+#animate_model(model, 300, 3000, save=True, title="para.mp4")
 
 
